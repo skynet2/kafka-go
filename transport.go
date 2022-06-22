@@ -784,6 +784,9 @@ func makeLayout(metadataResponse *meta.Response) protocol.Cluster {
 		if topic.IsInternal {
 			continue // TODO: do we need to expose those?
 		}
+
+		fmt.Printf("topics [%v]\n", topic.Name)
+
 		layout.Topics[topic.Name] = protocol.Topic{
 			Name:       topic.Name,
 			Error:      topic.ErrorCode,
@@ -798,9 +801,13 @@ func makePartitions(metadataPartitions []meta.ResponsePartition) map[int32]proto
 	protocolPartitions := make(map[int32]protocol.Partition, len(metadataPartitions))
 	numBrokerIDs := 0
 
+	fmt.Printf("metadataPartitions len [%v] \n", len(metadataPartitions))
+
 	for _, p := range metadataPartitions {
 		numBrokerIDs += len(p.ReplicaNodes) + len(p.IsrNodes) + len(p.OfflineReplicas)
 	}
+
+	fmt.Printf("numBrokerIDs len [%v] \n", numBrokerIDs)
 
 	// Reduce the memory footprint a bit by allocating a single buffer to write
 	// all broker ids.
@@ -821,6 +828,8 @@ func makePartitions(metadataPartitions []meta.ResponsePartition) map[int32]proto
 			Offline:  off,
 		}
 	}
+
+	fmt.Printf("brokerIDs len [%v] \n", len(brokerIDs))
 
 	return protocolPartitions
 }
